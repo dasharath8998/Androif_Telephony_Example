@@ -51,4 +51,31 @@
         android:id="@+id/etEMassage"
         android:hint="Enter Message"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnAttach"
+        android:layout_gravity="right"
+        android:text="Attach"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:id="@+id/btnMail"
+            android:text="Send Mail"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:id="@+id/btnJavaMail"
+            android:text="Java Mail"/>
+
+    </LinearLayout>
+
 </LinearLayout>

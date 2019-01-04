@@ -1,6 +1,9 @@
 package com.swami.admin.telephony
 
 import android.Manifest
+import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -10,6 +13,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.telephony.SmsManager
 import kotlinx.android.synthetic.main.activity_main.*
+
+var mno:String? = null
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,10 +45,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnSMS.setOnClickListener {
+
             if(sms_permission) {
-                var sManager = SmsManager.getDefault()
-                sManager.sendTextMessage(etNumber.text.toString(), null, etMessage.text.toString(), null, null)
-            }else{
+                mno = etNumber.text.toString()
+                var numbers = etNumber.text.toString().split(",")
+                for(number in numbers) {
+                    var sIntent = Intent(this@MainActivity, sentSMS::class.java)
+                    var dIntent = Intent(this@MainActivity, deliveredSMS::class.java)
+
+                    var psIntent = PendingIntent.getActivity(this@MainActivity, 0, sIntent, 0)
+                    var pdIntent = PendingIntent.getActivity(this@MainActivity, 0, dIntent, 0)
+                    var sManager = SmsManager.getDefault()
+                    sManager.sendTextMessage(etNumber.text.toString(), null, etMessage.text.toString(), psIntent, pdIntent)
+                }
+                }else{
                 requestSMS()
             }
         }
@@ -58,6 +73,30 @@ class MainActivity : AppCompatActivity() {
                 requestCall()
             }
         }
+
+        btnAttach.setOnClickListener {
+            var aDialog = AlertDialog.Builder(this@MainActivity)
+            aDialog.setTitle("Message")
+            aDialog.setMessage("Plese Select From Below Source")
+            aDialog.setPositiveButton("Camera",object:DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    var i = Intent("android.media.action.IMAGE_CAPTURE")
+                    startActivityForResult(i,1)
+                }
+            })
+            aDialog.setNegativeButton("File",object:DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    var i = Intent()
+                    i.action = Intent.ACTION_GET_CONTENT
+                    i.type = "*/*"
+                    startActivityForResult(i,2)
+                }
+            })
+            aDialog.setCancelable(true)
+            aDialog.show()
+
+        }
+
     }
 
     fun requestPermission(){
